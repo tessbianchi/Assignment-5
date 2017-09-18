@@ -1,10 +1,45 @@
 <!-- 
-  Create a new view that uses a map to display all the listings with the angular-google-maps library. 
-  Each listing should be displayed as a marker. Each marker, when clicked on, should display a window that 
-  provides the name, code, and address of the listing. 
-
-  Some useful documentation: 
-    https://angular-ui.github.io/angular-google-maps/#!/api/google-map
-    https://angular-ui.github.io/angular-google-maps/#!/api/markers
-    https://angular-ui.github.io/angular-google-maps/#!/api/windows
+  This template will load in the <ui-view> when we start the application. 
+  Notice the ng-init attribute, which will load the listings from our server on initializing the view. 
   -->
+<div class="row" ng-controller="ListingsController" ng-init="find()">
+  <div class="col-md-offset-1 col-md-10">
+    <ui-gmap-google-map center="map.center" zoom="map.zoom" options="options">
+    <ui-gmap-markers models="markers" coords="'self'" icon="'icon'"></ui-gmap-markers>
+
+    </ui-gmap-google-map>
+
+    <img id="loader" ng-show="loading" src="/../../img/484.gif">
+  </div>
+</div>
+
+
+
+
+
+
+<!-- 
+<div ng-show="error" class="text-danger">
+  <strong ng-bind="error"></strong>
+</div>
+<div ng-show="success" class="text-success">
+  <strong ng-bind="success"></strong>
+</div>
+<div class="input-group" id="searchBar">
+  <span class="input-group-addon" id="sizing-addon1"><span class="glyphicon glyphicon-search"></span></span>
+  <input type="text" class="form-control" placeholder="Search" ng-model="query">
+</div>
+<div class="tableWrapper">
+  <table class="table table-striped table-hover">
+    <tr>
+      <th>Code</th>
+      <th>Building Name</th>
+      <th></th>
+    </tr>
+
+    <tr ng-repeat="listing in listings | filter: query" ui-sref="listings.view({ listingId: listing._id })">
+      <td>{{listing.code}}</td>
+      <td>{{listing.name}}</td>
+    </tr>
+  </table>
+</div> -->

@@ -1,5 +1,6 @@
 angular.module('listings').controller('ListingsController', ['$scope', '$location', '$stateParams', '$state', 'Listings', 
   function($scope, $location, $stateParams, $state, Listings){
+
     $scope.find = function() {
       /* set loader*/
       $scope.loading = true;
@@ -8,6 +9,32 @@ angular.module('listings').controller('ListingsController', ['$scope', '$locatio
       Listings.getAll().then(function(response) {
         $scope.loading = false; //remove loader
         $scope.listings = response.data;
+
+        var local_listings = $scope.listings
+
+
+        var markers = [];
+        for (var i = 0; i < local_listings.length ; i++) 
+        {
+            if(local_listings[i].coordinates === undefined)
+            {
+                continue;
+            }
+            var a = local_listings[i].coordinates.latitude;
+            var b = local_listings[i].coordinates.longitude;
+
+            var ret = {
+                latitude: a,
+                longitude: b,
+                id: i,
+                title: local_listings[i].name
+            };
+
+            markers.push(ret)
+        }
+
+        $scope.markers = markers;
+
       }, function(error) {
         $scope.loading = false;
         $scope.error = 'Unable to retrieve listings!\n' + error;
@@ -79,13 +106,36 @@ angular.module('listings').controller('ListingsController', ['$scope', '$locatio
         successfully finished, navigate back to the 'listing.list' state using $state.go(). If an error 
         occurs, pass it to $scope.error. 
        */
+        var id = $stateParams.listingId;
+             /* Create the listing object */
+        var listing = {
+            name: $scope.name, 
+            code: $scope.code, 
+            address: $scope.address
+        };
+
+        Listings.update(id, listing)
+          .then(function(response) {
+            //if the object is successfully saved redirect back to the list page
+            $state.go('listings.list', { successMessage: 'Listing succesfully updated!' });
+          }, function(error) {
+            //otherwise display the error
+            $scope.error = 'Unable to update listing!\n' + error;
+          });
+
     };
 
     $scope.remove = function() {
-      /*
-        Implement the remove function. If the removal is successful, navigate back to 'listing.list'. Otherwise, 
-        display the error. 
-       */
+        var id = $stateParams.listingId;
+         /* Save the article using the Listings factory */
+        Listings.delete(id)
+              .then(function(response) {
+                //if the object is successfully saved redirect back to the list page
+                $state.go('listings.list', { successMessage: 'Listing succesfully deleted!' });
+              }, function(error) {
+                //otherwise display the error
+                $scope.error = 'Unable to delete listing!\n' + error;
+              });
     };
 
     /* Bind the success message to the scope if it exists as part of the current state */
